@@ -31,8 +31,14 @@ public class VentaController {
     public ResponseEntity<VentaResponseDTO> listarVentaPorId(@PathVariable Long id){
         return ResponseEntity.ok(ventaService.listarVentaPorId(id));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<VentaResponseDTO> actualizarVenta(@PathVariable Long id, @Valid @RequestBody VentaRequestDTO request){
+        return ResponseEntity.ok(ventaService.actualizarVenta(id, request));
+    }
+
     @DeleteMapping ("/{id}")
     public ResponseEntity<Void> eliminarVentaPorId(@PathVariable Long id){
+        ventaService.eliminarVenta(id);
         return ResponseEntity.noContent().build();
     }
 

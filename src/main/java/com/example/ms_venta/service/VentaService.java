@@ -59,6 +59,17 @@ public class VentaService {
 
     public void eliminarVenta(Long id){
         Venta varVenta = getProductOrTrow(id);
+        ventaRepository.delete(varVenta);
+    }
+
+    public VentaResponseDTO actualizarVenta(Long id, VentaRequestDTO request){
+        Venta varVenta = getProductOrTrow(id);
+        varVenta.setFechaArriendo(request.getFechaArriendo());
+        Venta updated = ventaRepository.save(varVenta);
+        return VentaResponseDTO.builder()
+                .id(updated.getId())
+                .fechaArriendo(updated.getFechaArriendo())
+                .build();
     }
 
 

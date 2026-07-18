@@ -2,6 +2,7 @@ package com.example.ms_venta.service;
 
 import com.example.ms_venta.dto.VentaRequestDTO;
 import com.example.ms_venta.dto.VentaResponseDTO;
+import com.example.ms_venta.messaging.VentaEventPublisher;
 import com.example.ms_venta.model.Venta;
 import com.example.ms_venta.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class VentaService {
     @Autowired
     VentaRepository ventaRepository;
 
+    @Autowired(required = false)
+    VentaEventPublisher ventaEventPublisher;
+
     private Venta getProductOrTrow(Long id){
         return ventaRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus
@@ -28,10 +32,14 @@ public class VentaService {
                 .fechaArriendo(request.getFechaArriendo())
                 .build();
         Venta varVenta2 = ventaRepository.save(varVenta);
-        return VentaResponseDTO.builder()
+        VentaResponseDTO response = VentaResponseDTO.builder()
                 .id(varVenta2.getId())
                 .fechaArriendo(varVenta2.getFechaArriendo())
                 .build();
+        if (ventaEventPublisher != null) {
+            ventaEventPublisher.publishVentaCreada(response);
+        }
+        return response;
     }
 
     public List<VentaResponseDTO> listarVentas() {
